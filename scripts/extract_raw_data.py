@@ -8,6 +8,10 @@ from parsers.internetine_vaistine import parse_internetine_vaistine
 from parsers.birzu_duona import parse_birzu_duona
 from parsers.sveikuolis import parse_sveikuolis
 from parsers.livinn import parse_livinn
+from parsers.rimi import parse_rimi
+from parsers.barbora import parse_barbora
+from parsers.assorti import parse_assorti
+from parsers.begliuteno import parse_begliuteno
 
 
 def parse_raw_data(file_contents, website):
@@ -30,6 +34,14 @@ def parse_raw_data(file_contents, website):
         parse_function = parse_sveikuolis(file_contents)
     elif website == 'livinn':
         parse_function = parse_livinn(file_contents)
+    elif website == 'rimi':
+        parse_function = parse_rimi(file_contents)
+    elif website == 'barbora':
+        parse_function = parse_barbora(file_contents)
+    elif website == 'assorti':
+        parse_function = parse_assorti(file_contents)
+    elif website == 'begliuteno':
+        parse_function = parse_begliuteno(file_contents)
     
     return parse_function
 
@@ -67,7 +79,11 @@ websites = [
     'internetine_vaistine',
     'birzu_duona',
     'sveikuolis',
-    'livinn'
+    'livinn',
+    'rimi',
+    'barbora',
+    'assorti',
+    'begliuteno'
     ]
 
 # create BigQuery client
