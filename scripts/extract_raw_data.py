@@ -104,7 +104,8 @@ schema = [
     bigquery.SchemaField("url", "STRING"),
     bigquery.SchemaField("ingredients", "STRING"),
     bigquery.SchemaField("nutrition_info", "STRING"),
-    bigquery.SchemaField("usage_info", "STRING")
+    bigquery.SchemaField("usage_info", "STRING"),
+    bigquery.SchemaField("extracted_at", "TIMESTAMP")
 ]
 
 # create job config for BigQuery table
@@ -121,6 +122,7 @@ for website in websites:
     print("Extracted data fields from {} files".format(len(extracted_data)))
 
     data_df = pd.DataFrame(data=extracted_data)
+    data_df['extracted_at'] = pd.Timestamp("now")
     print("Created dataframe with {} rows and {} columns".format(data_df.shape[0], data_df.shape[1]))
 
     print("Loading data to BigQuery...")
