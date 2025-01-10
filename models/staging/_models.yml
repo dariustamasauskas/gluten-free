@@ -1,0 +1,90 @@
+version: 2
+
+models:
+  - name: stg_base_internetine_vaistine
+    description: Staging model for internetine_vaistine products
+    columns: &stg_columns
+      - name: product_id
+        description: Primary key
+        tests:
+          - unique
+          - not_null
+      - name: product_name
+        description: Name of the product
+      - name: product_description
+        description: Longer description of the product
+      - name: brand
+        description: Product brand
+      - name: manufacturer
+        description: Product manufacturer
+      - name: weight
+        description: Weight of the product
+      - name: is_available
+        description: 1 if product is available to buy, 0 otherwise
+        tests:
+          - accepted_values:
+              values:
+                [1, 0]
+              quote: false
+      - name: original_price
+        description: Product price without any discounts
+      - name: discounted_price
+        description: Product price with discounts if any
+      - name: taxonomy_tree
+        description: Product category based on taxonomy tree
+        tests:
+          - not_null
+      - name: url
+        description: URL to access to the product on the website
+      - name: ingredients
+        description: Product ingredients
+      - name: nutrition_info
+        description: Product nutrition information
+      - name: usage_info
+        description: Product usage information if any
+
+  - name: stg_base_birzu_duona
+    description: Staging model for birzu_duona products
+    columns: *stg_columns
+  
+  - name: stg_base_sveikuolis
+    description: Staging model for sveikuolis products
+    columns: *stg_columns
+  
+  - name: stg_base_livinn
+    description: Staging model for livinn products
+    columns: *stg_columns
+
+  - name: stg_base_rimi
+    description: Staging model for rimi products
+    columns: *stg_columns
+  
+  - name: stg_base_barbora
+    description: Staging model for barbora products
+    columns: *stg_columns
+  
+  - name: stg_base_assorti
+    description: Staging model for assorti products
+    columns: *stg_columns
+  
+  - name: stg_base_begliuteno
+    description: Staging model for begliuteno products
+    columns: *stg_columns
+
+  - name: stg_unioned_products
+    description: Staging model for all websites unioned together
+    columns:
+      - name: product_id
+        description: Primary key
+        tests:
+          - unique
+          - not_null
+      - name: website
+        description: Name of the website from where the data was collected
+        tests:
+          - not_null
+          - accepted_values:
+              values: [
+                  'internetine_vaistine','rimi','livinn','assorti',
+                  'barbora','sveikuolis','begliuteno','birzu_duona'
+                  ]

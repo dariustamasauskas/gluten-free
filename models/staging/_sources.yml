@@ -1,0 +1,84 @@
+version: 2
+
+sources:
+  - name: internetine_vaistine
+    schema: source
+    freshness: &freshness
+      warn_after:
+        count: 7
+        period: day
+      error_after:
+        count: 14
+        period: day
+    loaded_at_field: extracted_at
+    tables:
+      - name: products
+        identifier: internetine_vaistine
+        columns: &columns
+          - name: url
+            tests:
+              - unique
+              - not_null
+
+  - name: birzu_duona
+    schema: source
+    freshness: *freshness
+    loaded_at_field: extracted_at
+    tables:
+      - name: products
+        identifier: birzu_duona
+        columns: *columns
+
+  - name: sveikuolis
+    schema: source
+    freshness: *freshness
+    loaded_at_field: extracted_at
+    tables:
+      - name: products
+        identifier: sveikuolis
+        columns: *columns
+
+  - name: livinn
+    schema: source
+    freshness: *freshness
+    loaded_at_field: extracted_at
+    tables:
+      - name: products
+        identifier: livinn
+        columns: *columns
+
+  - name: rimi
+    schema: source
+    freshness: *freshness
+    loaded_at_field: extracted_at
+    tables:
+      - name: products
+        identifier: rimi
+        columns: *columns
+
+  - name: barbora
+    schema: source
+    freshness: *freshness
+    loaded_at_field: extracted_at
+    tables:
+      - name: products
+        identifier: barbora
+        columns: *columns
+
+  - name: assorti
+    schema: source
+    freshness: *freshness
+    loaded_at_field: extracted_at
+    tables:
+      - name: products
+        identifier: assorti
+        columns: *columns
+
+  - name: begliuteno
+    schema: source
+    freshness: *freshness
+    loaded_at_field: extracted_at
+    tables:
+      - name: products
+        identifier: begliuteno
+        columns: *columns
