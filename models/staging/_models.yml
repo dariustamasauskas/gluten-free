@@ -9,8 +9,11 @@ models:
         tests:
           - unique
           - not_null
+          - not_na
       - name: product_name
         description: Name of the product
+        tests:
+          - not_na
       - name: product_description
         description: Longer description of the product
       - name: brand
@@ -34,6 +37,7 @@ models:
         description: Product category based on taxonomy tree
         tests:
           - not_null
+          - not_na
       - name: url
         description: URL to access to the product on the website
       - name: ingredients
@@ -78,11 +82,11 @@ models:
         description: Primary key
         tests:
           - unique
-          - not_null
       - name: website
         description: Name of the website from where the data was collected
         tests:
           - not_null
+          - not_na
           - accepted_values:
               values: [
                   'internetine_vaistine','rimi','livinn','assorti',

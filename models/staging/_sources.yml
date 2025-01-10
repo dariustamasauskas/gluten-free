@@ -19,6 +19,7 @@ sources:
             tests:
               - unique
               - not_null
+              - not_na
 
   - name: birzu_duona
     schema: source
