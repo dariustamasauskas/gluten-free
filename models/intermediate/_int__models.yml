@@ -1,0 +1,54 @@
+version: 2
+
+models:
+  - name: int_all_products
+    description: Intermediate model of all products with their fields cleaned up
+    columns:
+      - name: product_id
+        description: Primary key
+        data_tests:
+          - unique
+          - not_null
+          - not_na
+      - name: measurement_type
+        description: Measurement type of the product
+        data_tests:
+          - accepted_values:
+              values:
+                ['weight', 'volume', 'quantity', 'unknown']
+      - name: weight_g
+        description: Product weight in grams
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1000
+      - name: volume_ml
+        description: Product volume in milliliters
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1000
+      - name: quantity_units
+        description: Product quantity in units
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 50
+      - name: original_price_eur
+        description: Cleaned up original price in eur
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 50
+      - name: discounted_price_eur
+        description: Cleaned up discounted price in eur
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 50
+      - name: price_per_weight_kg
+        description: Price (original or discounted if available) calculated per weight kg
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1000
