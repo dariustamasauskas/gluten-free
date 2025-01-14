@@ -1,0 +1,8 @@
+version: 2
+
+seeds:
+  - name: category_mapping
+    description: Mapping between original category and standardized category across all websites
+    config:
+      quote_columns: false
+      delimiter: "|"
