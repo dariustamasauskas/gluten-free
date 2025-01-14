@@ -69,9 +69,9 @@ unioned_products_cleaned as (
         ) as discounted_price_eur,
         taxonomy_tree,
         url,
-        ingredients,
-        nutrition_info,
-        usage_info,
+        {{ format_string('ingredients') }} as ingredients,
+        {{ format_string('nutrition_info') }} as nutrition_info,
+        {{ format_string('usage_info') }} as usage_info,
         website
     from unioned_products
 ),
@@ -129,7 +129,10 @@ unioned_products_final as (
         ) as price_per_weight_kg,
         categ.product_category,
         prod.url,
-        prod.ingredients,
+        case
+            when prod.ingredients = 'n/a' then prod.ingredients
+            else {{ capitalize_first_letter('prod.ingredients') }}
+        end as ingredients,
         prod.nutrition_info,
         prod.usage_info,
         prod.website
