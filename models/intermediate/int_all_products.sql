@@ -132,7 +132,31 @@ unioned_products_final as (
         case
             when prod.ingredients = 'n/a' then prod.ingredients
             else {{ capitalize_first_letter('prod.ingredients') }}
-        end as ingredients,
+        end as ingredients_info,
+        case
+            when regexp_contains(lower(prod.ingredients), 'ryžių|ryžiai') then 1
+            else 0
+        end as ingredients_contains_rice,
+        case
+            when regexp_contains(lower(prod.ingredients), 'kukurūz') then 1
+            else 0
+        end as ingredients_contains_corn,
+        case
+            when regexp_contains(lower(prod.ingredients), 'kokos') then 1
+            else 0
+        end as ingredients_contains_coconut,
+        case
+            when regexp_contains(lower(prod.ingredients), 'kviečių krakmolas')
+            and regexp_contains(lower(prod.ingredients), 'be gliuteno|be ?glitim')
+            then 1
+            else 0
+        end as ingredients_contains_wheat_starch,
+        case
+            when regexp_contains(lower(prod.ingredients), 'wheat|kviet|kvieč|miež|rugin|rugių')
+            and not regexp_contains(lower(prod.ingredients), 'be gliuteno|be ?glitim|be kvieč')
+            then 1
+            else 0
+        end as ingredients_contains_gluten,
         prod.nutrition_info,
         prod.usage_info,
         prod.website
