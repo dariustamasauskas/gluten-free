@@ -4,12 +4,6 @@ models:
   - name: stg_base_internetine_vaistine
     description: Staging model for internetine_vaistine products
     columns: &stg_columns
-      - name: product_id
-        description: Primary key
-        tests:
-          - unique
-          - not_null
-          - not_na
       - name: product_name
         description: Name of the product
         tests:
@@ -78,10 +72,6 @@ models:
   - name: stg_unioned_products
     description: Staging model for all websites unioned together
     columns:
-      - name: product_id
-        description: Primary key
-        tests:
-          - unique
       - name: website
         description: Name of the website from where the data was collected
         tests:

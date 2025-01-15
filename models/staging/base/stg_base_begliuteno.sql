@@ -4,7 +4,6 @@ with source_data as (
 
 staging_data as (
     select
-        {{ dbt_utils.generate_surrogate_key(['product_name', 'url']) }} as product_id,
         product_name,
         product_description,
         brand,

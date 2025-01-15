@@ -1,8 +1,8 @@
 version: 2
 
 models:
-  - name: int_all_products
-    description: Intermediate model of all products with their fields cleaned up
+  - name: app_all_products
+    description: Application model of all products with their fields cleaned up
     columns:
       - name: product_id
         description: Primary key
