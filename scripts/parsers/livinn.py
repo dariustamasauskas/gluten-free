@@ -95,7 +95,7 @@ def parse_livinn(file_contents):
     if not ingredients_check:
         ingredients_parsed = 'n/a'
     else:
-        ingredients_start = ingredients_check.span()[0]
+        ingredients_start = ingredients_check.span()[1]
         ingredients_end = [x for x in re.finditer('\n', file_contents_str[ingredients_start:])][0].span()[1]
         ingredients_parsed = file_contents_str[ingredients_start:ingredients_start+ingredients_end]
         ingredients_parsed = ingredients_parsed.strip('\n')
