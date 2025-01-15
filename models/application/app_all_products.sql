@@ -6,9 +6,10 @@ category_tree_mapping as (
     select * from {{ ref("category_mapping") }}
 ),
 
+-- cleanup weight, price fields, create additional derived fields
 unioned_products_cleaned as (
     select
-        product_id,
+        {{ dbt_utils.generate_surrogate_key(['product_name', 'url']) }} as product_id,
         product_name,
         product_description,
         brand,
@@ -76,7 +77,10 @@ unioned_products_cleaned as (
     from unioned_products
 ),
 
+-- mapping original taxonomy tree categories with standardized categories
 unioned_products_categories as (
+
+    -- mapping using csv in seeds (for all categories except one)
     select
         prod.product_id,
         map.product_category
@@ -87,6 +91,7 @@ unioned_products_categories as (
 
     union all
 
+    -- mapping using regex rules (for one specific category)
     select
         product_id,
         case
@@ -107,8 +112,10 @@ unioned_products_categories as (
         end as product_category
     from unioned_products_cleaned
     where taxonomy_tree = 'Bakalėja -> Funkcinis maistas -> Be glitimo'
+
 ),
 
+-- joining mapped categories and creating more derived fields
 unioned_products_final as (
     select
         prod.product_id,

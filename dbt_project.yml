@@ -21,7 +21,5 @@ models:
   gluten_free:
     staging:
       +materialized: view
-    intermediate:
-      +materialized: table
-    marts:
+    application:
       +materialized: table
