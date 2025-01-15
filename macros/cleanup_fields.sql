@@ -1,9 +1,7 @@
 {% macro format_string(column_name) %}
     regexp_replace(
         regexp_replace(
-            replace(
-                replace( {{ column_name }}, 'Sudedamosios dalys: ', ''),
-            ' ,', ','),
+            replace({{ column_name }}, ' ,', ','),
         '([a-z%]),([a-z0-9])', '\\1, \\2'),
     '(\\d+) %', '\\1%')
 {% endmacro %}
