@@ -12,3 +12,7 @@
         right({{ column_name }}, length({{ column_name }})-1)
     )
 {% endmacro %}
+
+{% macro format_brand(column_name) %}
+    regexp_replace(normalize(upper({{ column_name }}), NFD), r"\pM", '')
+{% endmacro %}

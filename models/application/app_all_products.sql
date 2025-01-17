@@ -6,13 +6,13 @@ category_tree_mapping as (
     select * from {{ ref("category_mapping") }}
 ),
 
--- cleanup weight, price fields, create additional derived fields
+-- cleanup weight, price fields, brands, create additional derived fields
 unioned_products_cleaned as (
     select
         {{ dbt_utils.generate_surrogate_key(['product_name', 'url']) }} as product_id,
         product_name,
         product_description,
-        brand,
+        {{ format_brand('brand') }} as brand,
         manufacturer,
         case
             when regexp_contains(lower(weight), 'ml') and not regexp_contains(lower(weight), 'g')
@@ -121,7 +121,15 @@ unioned_products_final as (
         prod.product_id,
         prod.product_name,
         prod.product_description,
-        prod.brand,
+        case
+            when prod.brand = 'TORRAS STEVIA' then 'TORRAS'
+            when prod.brand = 'MAXSPORT' then 'MAX SPORT'
+            when prod.brand = 'GLUTENEX PKU' then 'GLUTENEX'
+            when prod.brand = 'BIRZU' then 'BIRZU DUONA'
+            when prod.brand = 'BALVITEN PKU' then 'BALVITEN'
+            when prod.brand = 'BALVITEN CLASSIC' then 'BALVITEN'
+            else prod.brand
+        end as brand,
         prod.manufacturer,
         prod.measurement_type,
         prod.weight_g,
