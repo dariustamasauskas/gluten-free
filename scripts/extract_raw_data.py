@@ -59,7 +59,7 @@ def process_files(website):
 
     file_data = []
 
-    directory = './raw/' + website + '/'
+    directory = './input/data/raw/' + website + '/'
     file_names = [f for f in os.listdir(directory) if f.endswith('.txt')]
 
     for file_name in file_names:
