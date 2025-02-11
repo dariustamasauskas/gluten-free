@@ -1,6 +1,7 @@
 version: 2
 
 models:
+
   - name: app_all_products
     description: Application model of all products with their fields cleaned up
     columns:
@@ -56,3 +57,28 @@ models:
         description: Standardized product category across all websites
         data_tests:
           - not_null
+
+  - name: app_similar_products
+    description: Application model of top 3 similar products for each product
+    columns:
+      - name: product_id
+        description: Primary key
+        data_tests:
+          - unique
+          - not_null
+      - name: similar_1
+        description: top1 similar product
+      - name: similar_2
+        description: top2 similar product
+      - name: similar_3
+        description: top3 similar product
+
+  - name: app_final_products
+    description: Application model (FINAL)
+    columns:
+      - name: product_id
+        description: Primary key
+        data_tests:
+          - unique
+          - not_null
+          - not_na
