@@ -7,69 +7,61 @@ import numpy as np
 
 from streamlit.components.v1 import html
 
-
 st.set_page_config(layout='wide')
 
-websites = [
-    'livinn',
-    'rimi',
-    'birzu_duona',
-    'assorti',
-    'internetine_vaistine',
-    'barbora',
-    'sveikuolis',
-    'begliuteno',
-]
 
-logos_dir = './input/logos/medium/'
-file_names = [f for f in os.listdir(logos_dir) if f.endswith('.jpg')]
+# Read and process data
 
+@st.cache_data
+def read_and_process_data():
 
-# Read data (temporary solution) and prepare for displaying
+    df = pd.read_excel('./input/data/app/app_final_products_extract.xlsx', dtype=str)
 
-df = pd.read_excel('./input/data/app/app_all_products_extract.xlsx', dtype=str)
+    df['brand'] = df['brand'].fillna('_Unidentified')
 
-df['brand'] = df['brand'].fillna('_Unidentified')
+    df['product_description'] = df['product_description'].fillna('not_available')
+    df['ingredients_info'] = df['ingredients_info'].fillna('not_available')
+    df['nutrition_info'] = df['nutrition_info'].fillna('not_available')
 
-df['product_description'] = df['product_description'].fillna('not_available')
-df['ingredients_info'] = df['ingredients_info'].fillna('not_available')
-df['nutrition_info'] = df['nutrition_info'].fillna('not_available')
+    df['weight_g'] = df['weight_g'].fillna('-').astype('str')
+    df['volume_ml'] = df['volume_ml'].fillna('-').astype('str')
+    df['quantity_units'] = df['quantity_units'].fillna('-').astype('str').replace('1', '-')
 
-df['weight_g'] = df['weight_g'].fillna('-').astype('str')
-df['volume_ml'] = df['volume_ml'].fillna('-').astype('str')
-df['quantity_units'] = df['quantity_units'].fillna('-').astype('str').replace('1', '-')
+    df['measurements_display'] = \
+        np.where(df['weight_g'] != '-', df['weight_g'] + ' g', '') + \
+        np.where((df['weight_g'] != '-') & (df['volume_ml'] != '-'), ', ' + df['volume_ml'] + ' ml', \
+            np.where((df['weight_g'] == '-') & (df['volume_ml'] != '-'), df['volume_ml'] + ' ml', '')) + \
+        np.where((df['weight_g'] != '-') & (df['quantity_units'] != '-'), ', ' + df['quantity_units'] + ' vnt', \
+            np.where((df['volume_ml'] != '-') & (df['quantity_units'] != '-'), ', ' + df['quantity_units'] + ' vnt', \
+                np.where((df['volume_ml'] == '-') & (df['quantity_units'] != '-'), df['quantity_units'] + ' vnt', '')))
 
-df['measurements_display'] = \
-    np.where(df['weight_g'] != '-', df['weight_g'] + ' g', '') + \
-    np.where((df['weight_g'] != '-') & (df['volume_ml'] != '-'), ', ' + df['volume_ml'] + ' ml', \
-        np.where((df['weight_g'] == '-') & (df['volume_ml'] != '-'), df['volume_ml'] + ' ml', '')) + \
-    np.where((df['weight_g'] != '-') & (df['quantity_units'] != '-'), ', ' + df['quantity_units'] + ' vnt', \
-        np.where((df['volume_ml'] != '-') & (df['quantity_units'] != '-'), ', ' + df['quantity_units'] + ' vnt', \
-            np.where((df['volume_ml'] == '-') & (df['quantity_units'] != '-'), df['quantity_units'] + ' vnt', '')))
+    df['original_price_eur'] = df['original_price_eur'].fillna(-1).astype('float')
+    df['discounted_price_eur'] = df['discounted_price_eur'].fillna(-1).astype('float')
+    df['combined_price_eur'] = np.where(df['discounted_price_eur'] > 0, df['discounted_price_eur'],
+        np.where(df['original_price_eur'] > 0, df['original_price_eur'], -1)).astype('float')
 
-df['original_price_eur'] = df['original_price_eur'].fillna(-1).astype('float')
-df['discounted_price_eur'] = df['discounted_price_eur'].fillna(-1).astype('float')
-df['combined_price_eur'] = np.where(df['discounted_price_eur'] > 0, df['discounted_price_eur'],
-    np.where(df['original_price_eur'] > 0, df['original_price_eur'], -1)).astype('float')
+    df['price_per_weight_kg'] = df['price_per_weight_kg'].fillna(-1).astype('float')
 
-df['price_per_weight_kg'] = df['price_per_weight_kg'].fillna(-1).astype('float')
+    return df
+
+df = read_and_process_data()
 
 
 # Prepare filters
 
-df_website_filter = df['website'].unique()
-df_website_filter = np.sort(df_website_filter)
-df_website_filter = np.insert(df_website_filter, 0, 'ALL', axis=0)
+def df_filters(df, filter_type):
+    df_filter = df[filter_type].unique()
+    df_filter = np.sort(df_filter)
+    df_filter = np.insert(df_filter, 0, 'ALL', axis=0)
+    return df_filter
+
+df_website_filter = df_filters(df, 'website')
 website_filter = st.sidebar.selectbox('Select website', df_website_filter, key='website_key')
 
-df_category_filter = df['product_category'].unique()
-df_category_filter = np.sort(df_category_filter)
-df_category_filter = np.insert(df_category_filter, 0, 'ALL', axis=0)
+df_category_filter = df_filters(df, 'product_category')
 category_filter = st.sidebar.selectbox('Select category', df_category_filter, key='category_key')
 
-df_brand_filter = df['brand'].unique()
-df_brand_filter = np.sort(df_brand_filter)
-df_brand_filter = np.insert(df_brand_filter, 0, 'ALL', axis=0)
+df_brand_filter = df_filters(df, 'brand')
 brand_filter = st.sidebar.selectbox('Select brand', df_brand_filter, key='brand_key')
 
 price_filter_min = df['combined_price_eur'].min() + 1
@@ -206,7 +198,25 @@ var tab = tabGroup.getElementsByTagName("button")
 tab[{tab}].click()
 """
 
+
+# Define additional fields
+
 product_id = None
+
+websites = [
+    'livinn',
+    'rimi',
+    'birzu_duona',
+    'assorti',
+    'internetine_vaistine',
+    'barbora',
+    'sveikuolis',
+    'begliuteno',
+]
+
+logos_dir = './input/logos/medium/'
+
+file_names = [f for f in os.listdir(logos_dir) if f.endswith('.jpg')]
 
 
 # Display products discovery tab
@@ -430,6 +440,12 @@ with tab_exploration:
         if df_selected.iloc[0]['is_available'] == '0':
             expl.markdown(f"<span style='color:#808080'> :information_source: Product is currently \
             out of stock</span>", unsafe_allow_html=True)
+
+        # displaying warning if contains gluten ingredients
+        if df_selected.iloc[0]['ingredients_contains_gluten'] == '1':
+            expl.markdown(f"<span style='color:red'>!!! Contains ingredients \
+            with gluten !!!</span>", unsafe_allow_html=True, \
+            help='This product contains some ingredients (wheat, barley, rye) that are known to contain gluten')
         
         # displaying product description
         expl.markdown(":material/description: Product description") 
@@ -439,12 +455,6 @@ with tab_exploration:
         else:
             expl.markdown(f"<span style='color:gray'><font size='2'>Product description \
             not available</font></span>", unsafe_allow_html=True)
-        
-        # displaying warning if contains gluten ingredients
-        if df_selected.iloc[0]['ingredients_contains_gluten'] == '1':
-            expl.markdown(f"<span style='color:red'>!!! Contains ingredients \
-            with gluten !!!</span>", unsafe_allow_html=True, \
-            help='This product contains some ingredients (wheat, barley, rye) that are known to contain gluten')
         
         # displaying product ingredients
         expl.markdown(":material/grocery: Ingredients") 
@@ -467,18 +477,89 @@ with tab_exploration:
 
         st.markdown('### Similar products on other websites')
 
-        similar_1, similar_2, similar_3 = st.columns(3)
+        # Prepare data for 3 similar products
 
-        sim1 = similar_1.container(border=True)
-        sim1.write('')
+        df_sim1 = df[df['product_id'] == df_selected['similar_1'].iloc[0]]
+        df_sim2 = df[df['product_id'] == df_selected['similar_2'].iloc[0]]
+        df_sim3 = df[df['product_id'] == df_selected['similar_3'].iloc[0]]
 
-        sim2 = similar_2.container(border=True)
-        sim2.write('')
+        df_sim = pd.concat([df_sim1, df_sim2, df_sim3], ignore_index=True)
 
-        sim3 = similar_3.container(border=True)
-        sim3.write('')
+        # Display top 3 similar products
 
-        # in progress
+        cols_similar = st.columns(3)
+
+        for n_row, row in df_sim.reset_index().iterrows():
+            with cols_similar[n_row]:
+                
+                similar = st.container(border=True)
+                
+                # displaying website logos
+                similar.image(f"./input/logos/mini/logo_mini_{row['website']}.jpg")
+
+                # displaying product names with clickable urls
+                similar.markdown(f"**[{row['product_name']}]({row['url']})**")
+
+                # displaying product brands
+                if row['brand'] == '_Unidentified':
+                    similar.markdown(f"<span style='color:gray'>Unidentified brand</span>", unsafe_allow_html=True)
+                else:
+                    similar.markdown(f"<span style='color:gray'><font size='4'>**{row['brand']}**</font></span>", \
+                    unsafe_allow_html=True)
+                
+                # displaying product weight, volume, quantity
+                similar.markdown(f"<span style='color:gray'>{row['measurements_display']}</span>", unsafe_allow_html=True)
+
+                # displaying product price
+                if row['original_price_eur'] != -1:
+                    if row['price_per_weight_kg'] != -1:
+                        if row['discounted_price_eur'] != -1:
+                            similar.markdown(f"**<font size='6'>~~€{row['original_price_eur']}~~ <span style='color:red'>€ \
+                            {row['discounted_price_eur']}</span></font>**$~~$*{row['price_per_weight_kg']} €/kg*", \
+                            unsafe_allow_html=True)
+                        else:
+                            similar.markdown(f"**<font size='6'>€{row['original_price_eur']}</font>**$~~$ \
+                            *{row['price_per_weight_kg']} €/kg*", unsafe_allow_html=True)
+                    else:
+                        if row['discounted_price_eur'] != -1:
+                            similar.markdown(f"**<font size='6'>~~€{row['original_price_eur']}~~ <span style='color:red'>€ \
+                            {row['discounted_price_eur']}</span></font>**", unsafe_allow_html=True)
+                        else:
+                            similar.markdown(f"**<font size='6'>€{row['original_price_eur']}</font>**", \
+                            unsafe_allow_html=True)
+                
+                # displaying product availabilty
+                if row['is_available'] == '0':
+                    similar.markdown(f"<span style='color:#808080'> :information_source: Product is currently \
+                    out of stock</span>", unsafe_allow_html=True)
+
+                # displaying product description
+                if row['product_description'] != 'not_available':
+                    similar.markdown(f"<span style='color:gray'><font size='2'> \
+                    {row['product_description']}</font></span>", unsafe_allow_html=True)
+                else:
+                    similar.markdown(f"<span style='color:gray'><font size='2'>Product description \
+                    not available</font></span>", unsafe_allow_html=True)
+
+                # displaying warning if contains gluten ingredients
+                if row['ingredients_contains_gluten'] == '1':
+                    similar.markdown(f"<span style='color:red'>!!! Contains ingredients \
+                    with gluten !!!</span>", unsafe_allow_html=True, \
+                    help='This product contains some ingredients (wheat, barley, rye) that are known to contain gluten')
+
+                # displaying product ingredients
+                popover_ingr = similar.popover("Show ingredients", icon=":material/grocery:")
+                if row['ingredients_info'] != 'not_available':
+                    popover_ingr.markdown(f"{row['ingredients_info']}")
+                else:
+                    popover_ingr.markdown(f"Ingredients not available")
+
+                # displaying product nutrition info
+                popover_nutr = similar.popover("Show nutrition info", icon=":material/nutrition:")
+                if row['nutrition_info'] != 'not_available':
+                    popover_nutr.markdown(f"{row['nutrition_info']}")
+                else:
+                    popover_nutr.markdown(f"Nutrition info not available")
 
 
 # Display products visualization tab
