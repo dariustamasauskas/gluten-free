@@ -1,6 +1,6 @@
 target/
 dbt_packages/
 logs/
-input/
+input/data/raw/
 **/__pycache__/
 **/.ipynb_checkpoints/
