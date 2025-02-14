@@ -248,7 +248,7 @@ with tab_discovery:
 
     # Prepare search bar
 
-    c_search, c_clear = st.columns([8, 1])
+    c_search, c_clear = st.columns([15, 1])
 
     text_search = c_search.text_input(
         label='Search bar',
@@ -263,7 +263,7 @@ with tab_discovery:
     if 'search_key' not in st.session_state:
         st.session_state.search_key = ''
 
-    clear_search = c_clear.button('Clear search', on_click=reset_search)
+    clear_search = c_clear.button('Clear', on_click=reset_search)
 
     # Prepare data based on filters
 
