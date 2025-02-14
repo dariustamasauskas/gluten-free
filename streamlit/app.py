@@ -248,7 +248,7 @@ with tab_discovery:
 
     # Prepare search bar
 
-    c_search, c_clear = st.columns([9, 1])
+    c_search, c_clear = st.columns([8, 1])
 
     text_search = c_search.text_input(
         label='Search bar',
