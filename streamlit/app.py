@@ -317,16 +317,16 @@ with tab_discovery:
                 if row['original_price_eur'] != -1:
                     if row['price_per_weight_kg'] != -1:
                         if row['discounted_price_eur'] != -1:
-                            product.markdown(f"**<font size='6'>~~€{row['original_price_eur']}~~ <span style='color:red'>€ \
-                            {row['discounted_price_eur']}</span></font>**$~~$*{row['price_per_weight_kg']} €/kg*", \
+                            product.markdown(f"**<font size='6'>~~€{row['original_price_eur']}~~ <span style='color:red'> \
+                            €{row['discounted_price_eur']}</span></font>**$~~$*{row['price_per_weight_kg']} €/kg*", \
                             unsafe_allow_html=True)
                         else:
                             product.markdown(f"**<font size='6'>€{row['original_price_eur']}</font>**$~~$ \
                             *{row['price_per_weight_kg']} €/kg*", unsafe_allow_html=True)
                     else:
                         if row['discounted_price_eur'] != -1:
-                            product.markdown(f"**<font size='6'>~~€{row['original_price_eur']}~~ <span style='color:red'>€ \
-                            {row['discounted_price_eur']}</span></font>**", unsafe_allow_html=True)
+                            product.markdown(f"**<font size='6'>~~€{row['original_price_eur']}~~ <span style='color:red'> \
+                            €{row['discounted_price_eur']}</span></font>**", unsafe_allow_html=True)
                         else:
                             product.markdown(f"**<font size='6'>€{row['original_price_eur']}</font>**", \
                             unsafe_allow_html=True)
@@ -514,16 +514,16 @@ with tab_exploration:
                 if row['original_price_eur'] != -1:
                     if row['price_per_weight_kg'] != -1:
                         if row['discounted_price_eur'] != -1:
-                            similar.markdown(f"**<font size='6'>~~€{row['original_price_eur']}~~ <span style='color:red'>€ \
-                            {row['discounted_price_eur']}</span></font>**$~~$*{row['price_per_weight_kg']} €/kg*", \
+                            similar.markdown(f"**<font size='6'>~~€{row['original_price_eur']}~~ <span style='color:red'> \
+                            €{row['discounted_price_eur']}</span></font>**$~~$*{row['price_per_weight_kg']} €/kg*", \
                             unsafe_allow_html=True)
                         else:
                             similar.markdown(f"**<font size='6'>€{row['original_price_eur']}</font>**$~~$ \
                             *{row['price_per_weight_kg']} €/kg*", unsafe_allow_html=True)
                     else:
                         if row['discounted_price_eur'] != -1:
-                            similar.markdown(f"**<font size='6'>~~€{row['original_price_eur']}~~ <span style='color:red'>€ \
-                            {row['discounted_price_eur']}</span></font>**", unsafe_allow_html=True)
+                            similar.markdown(f"**<font size='6'>~~€{row['original_price_eur']}~~ <span style='color:red'> \
+                            €{row['discounted_price_eur']}</span></font>**", unsafe_allow_html=True)
                         else:
                             similar.markdown(f"**<font size='6'>€{row['original_price_eur']}</font>**", \
                             unsafe_allow_html=True)
