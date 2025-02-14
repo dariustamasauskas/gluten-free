@@ -4,7 +4,6 @@ import re
 import streamlit as st
 import pandas as pd
 import numpy as np
-import openpyxl
 
 from streamlit.components.v1 import html
 
